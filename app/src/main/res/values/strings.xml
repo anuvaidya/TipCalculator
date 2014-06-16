@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TipCalculator</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="label_num_of_people">No of People</string>
+    <string name="label_total_amount">Total Amount</string>
+    <string name="label_fifteen">15 %</string>
+    <string name="label_twentyfive">25 %</string>
+    <string name="label_other">Other</string>
+    <string name="label_amount_to_pay"/>
+    <string name="label_total_amount_to_pay">Total Amount To Pay</string><string name="label_tip_amount">Tip Amount</string>
+
+</resources>
