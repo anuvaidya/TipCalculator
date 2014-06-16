@@ -32,9 +32,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     public static final double FIFTEEN = .15;
     public static final double TWENTYFIVE = .25;
 
-    private String totalAmount,billAmount,numPeopleToSplit;
-    private Double totalAmountD,tipAmountD;
-    private Double numPeopleToSplitD,amountPerPersonD;
+    public enum TipSelection{FIFTEEN,TWENTYFIVE,OTHER};
+
+    private String totalAmount,billAmount,numPeopleToSplit,tipValue;
+    private Double totalAmountD,tipAmountD,billAmountD;
+    private Double numPeopleToSplitD,amountPerPersonD,tipValueD;
+    private TipSelection tipState;
 
     public interface Constants {
         String LOG = "com.tipcalculator.app";
@@ -46,33 +49,11 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        etNumPeopleToSplit = (EditText)findViewById(R.id.etNumPeopleToSplit);
-        etNumPeopleToSplit.setText("1");
-        etTotalAmount = (EditText)findViewById(R.id.etTotalAmount);
-        etTotalAmount.setText("0.0");
-        etTipAmount = (EditText)findViewById(R.id.etTipAmount);
-        etTipAmount.setEnabled(false);
-        etBillAmount = (EditText)findViewById(R.id.etBillAmount);
-        etBillAmount.setEnabled(false);
-        etTotalPerPerson = (EditText)findViewById(R.id.etTotalPerPerson);
-        etTotalPerPerson.setEnabled(false);
+       setup();
 
 
-       /* etOtherTip = (EditText)findViewById(R.id.etOtherTip);
-        etOtherTip.setEnabled(false);
-        etOtherTip.setInputType(InputType.TYPE_NULL);
-        etOtherTip.setFocusableInTouchMode(false);
-        etOtherTip.clearFocus();*/
 
-        disableOtherTipEditText();
-//
 
-        // find the group id for radio group
-        // make sure that at least one button is checked, by checking for -1
-        rgTip = (RadioGroup)findViewById(R.id.radioGroup);
-        rbFifteen = (RadioButton)findViewById(R.id.rbFifteen);
-        rbTwentyFive = (RadioButton)findViewById(R.id.rbTwentyfive);
-        rbOther = (RadioButton)findViewById(R.id.rbOther);
 
 
         //on edit text changed on numOfPeopleSplit
@@ -80,19 +61,19 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
 
             public void afterTextChanged(Editable s) {
 
+                Toast.makeText(getBaseContext(),"after text is changed",Toast.LENGTH_SHORT).show();
                 numPeopleToSplit =  etNumPeopleToSplit.getText().toString();
+                Log.i(Constants.LOG,numPeopleToSplit);
 
                 // this if statement is to prevent the app crashing when you hit backspace
                 // this is to make sure that the text box is not null
                 if ((numPeopleToSplit.length() != 0))
                 {
                     Toast.makeText(getBaseContext(), numPeopleToSplit, Toast.LENGTH_SHORT).show();
-                    rbFifteen.setChecked(true);
-                    calculateTip(FIFTEEN);
-                 //   calculateBill();
+
+                   calculateBill();
 
                 }
-
 
             }
 
@@ -113,21 +94,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
                 if (totalAmount.length() != 0)
                 {
                     totalAmountD = Double.parseDouble(totalAmount);
-                    Toast.makeText(getBaseContext(),totalAmount,Toast.LENGTH_SHORT).show();
-                    etBillAmount.setText(totalAmount);
-                    billAmount = etBillAmount.getText().toString();
-                    rbFifteen.setChecked(true);
-                    calculateTip(FIFTEEN);
                     calculateBill();
                 }
-              /*  if (totalAmount.matches("0.0"))
-                {
-                    etBillAmount.setText(totalAmount);
-                    rbFifteen.setChecked(true);
-                    calculateBill();
 
-
-                } */
 
             }
 
@@ -139,16 +108,31 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         });
 
 
+        etOtherTip.addTextChangedListener(new TextWatcher() {
 
-        // clear all the radio buttons
-        rgTip.clearCheck();
+            public void afterTextChanged(Editable s) {
 
-        //set the default radio button to radio button fifteen
-        // if I don't set this the listener is not firing
-        rbFifteen.setChecked(true);
+                tipValue = etOtherTip.getText().toString();
+                if (tipValue.length() != 0)
+                {
+
+                    // rgTip.setEnabled(true);
+                    //totalAmount = etTotalAmount.getText().toString();
+                    tipValueD = Double.parseDouble(tipValue);
+                    Toast.makeText(getBaseContext(),tipValueD.toString(),Toast.LENGTH_SHORT).show();
+
+                    calculateBill();
+                }
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
 
 
-        // set the handler for the radio buttons
+                // set the handler for the radio buttons
         rgTip.setOnCheckedChangeListener(this);
 
         // convert from double to string and assign it to editText tip amount
@@ -174,6 +158,40 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         Double amountPerPersonD = billAmountD / numPeopleToSplitD;
         etTotalPerPerson.setText(amountPerPersonD.toString()); */
 
+    }
+
+    private void setup() {
+
+        Toast.makeText(getBaseContext(),"inside set up method",Toast.LENGTH_SHORT).show();
+
+        etNumPeopleToSplit = (EditText)findViewById(R.id.etNumPeopleToSplit);
+        etNumPeopleToSplit.setText("1");
+        etTotalAmount = (EditText)findViewById(R.id.etTotalAmount);
+        etTotalAmount.setText("0.0");
+        etTipAmount = (EditText)findViewById(R.id.etTipAmount);
+        etTipAmount.setEnabled(false);
+        etBillAmount = (EditText)findViewById(R.id.etBillAmount);
+        etBillAmount.setEnabled(false);
+        etTotalPerPerson = (EditText)findViewById(R.id.etTotalPerPerson);
+        etTotalPerPerson.setEnabled(false);
+        etOtherTip = (EditText)findViewById(R.id.etOtherTip);
+        disableOtherTipEditText();
+
+        // find the group id for radio group
+        // make sure that at least one button is checked, by checking for -1
+        rgTip = (RadioGroup)findViewById(R.id.radioGroup);
+        rbFifteen = (RadioButton)findViewById(R.id.rbFifteen);
+        rbTwentyFive = (RadioButton)findViewById(R.id.rbTwentyfive);
+        rbOther = (RadioButton)findViewById(R.id.rbOther);
+
+
+        // clear all the radio buttons
+        rgTip.clearCheck();
+
+        //set the default radio button to radio button fifteen
+        // if I don't set this the listener is not firing
+        rbFifteen.setChecked(true);
+        tipState = TipSelection.FIFTEEN;
     }
 
 
@@ -218,7 +236,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
 
     private void disableOtherTipEditText()
     {
-        etOtherTip = (EditText)findViewById(R.id.etOtherTip);
+       // etOtherTip = (EditText)findViewById(R.id.etOtherTip);
         etOtherTip.setEnabled(false);
         etOtherTip.setInputType(InputType.TYPE_NULL);
         etOtherTip.setFocusableInTouchMode(false);
@@ -236,7 +254,10 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId)
     {
-        double tipPercent = 0.0;
+        //double tipPercent = 0.0;
+
+        Toast.makeText(getBaseContext(),"inside on checked changed", Toast.LENGTH_SHORT).show();
+
         // checkedId is the RadioButton selected
         switch(checkedId)
         {
@@ -244,90 +265,128 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
                 Toast.makeText(getBaseContext(),
                         "fifteen is selected", Toast.LENGTH_SHORT).show();
 
-                tipPercent = FIFTEEN;
+               tipState = TipSelection.FIFTEEN;
+
+               // tipPercent = FIFTEEN;
                /* tipAmountD = totalAmountD * FIFTEEN;
                 System.out.println("the tip amount double = " + tipAmountD);
                 System.out.println("the total amount double = " + totalAmountD);
                 Log.i("constants.LOG","inside fifteen");*/
-                calculateTip(tipPercent);
+                //calculateTip(tipPercent);
                 disableOtherTipEditText();
+                //try this first time
+                calculateBill();
                 break;
 
             case R.id.rbTwentyfive:
                 Toast.makeText(getBaseContext(),
                         "twenty five is selected", Toast.LENGTH_SHORT).show();
-                tipPercent = TWENTYFIVE;
-                calculateTip(tipPercent);
+                tipState = TipSelection.TWENTYFIVE;
+                //tipPercent = TWENTYFIVE;
+               //calculateTip(tipPercent);
                 //tipAmountD = totalAmountD * TWENTYFIVE;
                 disableOtherTipEditText();
+                calculateBill();
                 break;
             case R.id.rbOther:
                 Toast.makeText(getBaseContext(),
                         "other is selected", Toast.LENGTH_SHORT).show();
-
+                tipState = TipSelection.OTHER;
                 enableOtherTipEditText();
-                tipPercent = Double.parseDouble(etOtherTip.getText().toString());
-                calculateTip(tipPercent);
+
+                //tipPercent = Double.parseDouble(etOtherTip.getText().toString());
+               // calculateTip(tipPercent);
                /* String otherTip = etOther.getText().toString();
 
                 tipAmountD = totalAmountD + Double.parseDouble(etOther.getText().toString());*/
                 break;
 
         }
-
-        calculateBill();
-        // convert from double to string and assign it to editText tip amount
-       /* etTipAmount.setText(tipAmountD.toString());
-
-        // tip amount+total amount = bill amount
-        Double billAmountD = tipAmountD + Double.parseDouble(billAmount);
-        etBillAmount.setText(billAmountD.toString());
-
-        // calculate the amount per person - string to double and back to string.
-        Toast.makeText(getBaseContext(),numPeopleToSplit,Toast.LENGTH_SHORT).show();
-        Double numPeopleToSplitD = Double.parseDouble(numPeopleToSplit);
-        Double amountPerPersonD = billAmountD / numPeopleToSplitD;
-
-        // Format and display
-      //  NumberFormat formatter = NumberFormat.getCurrencyInstance();
-        etTotalPerPerson.setText(amountPerPersonD.toString());
-        */
-
+        // the reason you don't want to call outside because when the other
+        // radio button is selected, I would like to show the existing values
+        // only when the user enters the new value, the new bill is calculated.
+        //calculateBill();
     }
 
-    private void calculateTip(double tipPercent)
-    {
-        tipAmountD = totalAmountD * tipPercent;
-        System.out.println("the tip amount double = " + tipAmountD);
-        System.out.println("the total amount double = " + totalAmountD);
-        Log.i("constants.LOG","inside fifteen");
 
-    }
     private void calculateBill()
     {
-        // convert from double to string and assign it to editText tip amount
-        etTipAmount.setText(tipAmountD.toString());
+        double tipPercent = 0.0;
 
+        //Log.i(Constants.LOG,"inside caldulate Bill");
+
+        Toast.makeText(getBaseContext(),"inside calculate bill",Toast.LENGTH_SHORT).show();
+
+
+        //calculate tip
+        if (tipState == TipSelection.FIFTEEN)
+        {
+            //Toast.makeText(getBaseContext(),"state is fifteen", Toast.LENGTH_SHORT).show();
+            tipPercent = FIFTEEN;
+
+        }
+        else if (tipState == TipSelection.TWENTYFIVE)
+        {
+            tipPercent = TWENTYFIVE;
+        }
+        else
+            tipAmountD = tipValueD;
+
+        // calculate tip if the user selects percentages.
+        if (tipState != TipSelection.OTHER)
+            tipAmountD = totalAmountD * tipPercent;
+
+
+
+        //Log.i(Constants.LOG,tipAmountD.toString());
+
+        // calculate Bill Amount
         // tip amount+total amount = bill amount
-        Double billAmountD = tipAmountD + Double.parseDouble(billAmount);
-        etBillAmount.setText(billAmountD.toString());
+        billAmountD = tipAmountD + totalAmountD;
+        Log.i(Constants.LOG,billAmountD.toString());
 
-        // calculate the amount per person - string to double and back to string.
-        Toast.makeText(getBaseContext(),"num people to split" + numPeopleToSplit,Toast.LENGTH_SHORT).show();
-        numPeopleToSplitD = Double.parseDouble(numPeopleToSplit);
+       // etBillAmount.setText(billAmountD.toString());
+
+        // convert from double to string and assign it to editText tip amount
+       // etTipAmount.setText(tipAmountD.toString());
+
+
+
+
+            // calculate the amount per person - string to double and back to string.
+       // Toast.makeText(getBaseContext(),"num people to split" + numPeopleToSplit,Toast.LENGTH_SHORT).show();
+        numPeopleToSplitD = Double.parseDouble(etNumPeopleToSplit.getText().toString());
+        Toast.makeText(getBaseContext(),"numofpeople "+ numPeopleToSplitD, Toast.LENGTH_SHORT).show();
 
         // check division by zero
         if (numPeopleToSplitD > 0)
         {
             amountPerPersonD = billAmountD / numPeopleToSplitD;
-        }
 
+        }
+        Toast.makeText(getBaseContext(),"perperson "+ amountPerPersonD, Toast.LENGTH_SHORT).show();
 
         // Format and display
         // NumberFormat formatter = NumberFormat.getCurrencyInstance();
-        etTotalPerPerson.setText(amountPerPersonD.toString());
+        //etTotalPerPerson.setText(amountPerPersonD.toString());
+
+        display();
+
     }
 
+    private void display()
+    {
+
+
+       // set tip amount,bill amount, total per person
+       // convert double values to string
+        etTipAmount.setText(tipAmountD.toString());
+        etBillAmount.setText(billAmountD.toString());
+        // Format and display
+        // NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        etTotalPerPerson.setText(amountPerPersonD.toString());
+
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         

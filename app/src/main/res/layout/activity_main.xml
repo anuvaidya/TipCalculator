@@ -30,7 +30,6 @@
         android:layout_height="wrap_content"
         android:id="@id/etNumPeopleToSplit"
         android:gravity="center"
-        android:lines = "1"
         android:layout_below="@id/tvNumPeopleLabel"
         android:layout_alignParentStart="true"
         android:layout_alignEnd="@id/tvNumPeopleLabel" />
