@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnCheckedChangeListener{
 
@@ -48,31 +47,31 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-       setup();
-
-
-
-
-
+        setup();
 
         //on edit text changed on numOfPeopleSplit
         etNumPeopleToSplit.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
 
-                Toast.makeText(getBaseContext(),"after text is changed",Toast.LENGTH_SHORT).show();
-                numPeopleToSplit =  etNumPeopleToSplit.getText().toString();
-                Log.i(Constants.LOG,numPeopleToSplit);
 
-                // this if statement is to prevent the app crashing when you hit backspace
-                // this is to make sure that the text box is not null
-                if ((numPeopleToSplit.length() != 0))
+                String inputString = s.toString();
+                numPeopleToSplit = etNumPeopleToSplit.getText().toString();
+
+                if ((inputString != null) && (!inputString.equals("")))
                 {
-                    Toast.makeText(getBaseContext(), numPeopleToSplit, Toast.LENGTH_SHORT).show();
 
-                   calculateBill();
-
+                    Log.i(Constants.LOG,numPeopleToSplit);
+                    Log.i(Constants.LOG,inputString);
+                    try {
+                        // convert string to double - numPeopleTosplit
+                        numPeopleToSplitD = Double.parseDouble(numPeopleToSplit);
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        etNumPeopleToSplit.setText("");
+                    }
+                    calculateBill();
                 }
 
             }
@@ -81,6 +80,36 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
             }
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+              /*
+
+                String inputString = s.toString();
+
+                if ((inputString != null) && (!inputString.equals("")))
+                {
+                    numPeopleToSplit = etNumPeopleToSplit.getText().toString();
+                    Log.i(Constants.LOG,numPeopleToSplit);
+                    Log.i(Constants.LOG,inputString);
+                    try {
+                        // convert string to double - numPeopleTosplit
+                        numPeopleToSplitD = Double.parseDouble(numPeopleToSplit);
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        etNumPeopleToSplit.setText("");
+                    }
+                    calculateBill();
+
+                }*/
+
+                //numPeopleToSplit =  etNumPeopleToSplit.getText().toString();
+
+                // this if statement is to prevent the app crashing when you hit backspace
+                // this is to make sure that the text box is not null
+                //if ((numPeopleToSplit.length() != 0))
+                //{
+               //     calculateBill();
+               // }
             }
         });
 
@@ -89,15 +118,12 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
 
             public void afterTextChanged(Editable s) {
 
-                // rgTip.setEnabled(true);
                 totalAmount = etTotalAmount.getText().toString();
                 if (totalAmount.length() != 0)
                 {
                     totalAmountD = Double.parseDouble(totalAmount);
                     calculateBill();
                 }
-
-
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -107,62 +133,52 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
             }
         });
 
-
+        //listener for other tip edit text
         etOtherTip.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
 
                 tipValue = etOtherTip.getText().toString();
-                if (tipValue.length() != 0)
-                {
-
-                    // rgTip.setEnabled(true);
-                    //totalAmount = etTotalAmount.getText().toString();
-                    tipValueD = Double.parseDouble(tipValue);
-                    Toast.makeText(getBaseContext(),tipValueD.toString(),Toast.LENGTH_SHORT).show();
-
+                if (tipValue.length() != 0) {
+                    try {
+                        tipValueD = Double.parseDouble(tipValue);
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        etOtherTip.setText("");
+                    }
                     calculateBill();
                 }
             }
+
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                //change this to
+                // String inputString =
+             /*   if (tipValue.length() != 0) {
+                    try {
+                        tipValueD = Double.parseDouble(tipValue);
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        etOtherTip.setText("");
+                    }
+                    calculateBill();
+                }//end of if
+                */
             }
         });
 
 
-                // set the handler for the radio buttons
+        // listener for the radio buttons
         rgTip.setOnCheckedChangeListener(this);
-
-        // convert from double to string and assign it to editText tip amount
-
-       /* double total = 44;
-        String total2= new Double(total).toString();*/
-
-
-      //  String s = String.valueOf(tipAmountD);
-
-      //  if (BuildConfig.DEBUG) {
-//            Log.d(Constants.LOG, tipAmountD.toString());
-      //  }
-      //  etTipAmount.setText(s);
-       // Toast.makeText(getBaseContext(),s,Toast.LENGTH_SHORT).show();
-
-        // tip amount+total amount = bill amount
-   /*     Double billAmountD = tipAmountD + Double.parseDouble(billAmount);
-        etBillAmount.setText(billAmountD.toString());
-
-        // calculate the amount per person - string to double and back to string.
-        Double numPeopleToSplitD = Double.parseDouble(numPeopleToSplit);
-        Double amountPerPersonD = billAmountD / numPeopleToSplitD;
-        etTotalPerPerson.setText(amountPerPersonD.toString()); */
 
     }
 
     private void setup() {
-
-        Toast.makeText(getBaseContext(),"inside set up method",Toast.LENGTH_SHORT).show();
 
         etNumPeopleToSplit = (EditText)findViewById(R.id.etNumPeopleToSplit);
         etNumPeopleToSplit.setText("1");
@@ -183,7 +199,6 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         rbFifteen = (RadioButton)findViewById(R.id.rbFifteen);
         rbTwentyFive = (RadioButton)findViewById(R.id.rbTwentyfive);
         rbOther = (RadioButton)findViewById(R.id.rbOther);
-
 
         // clear all the radio buttons
         rgTip.clearCheck();
@@ -233,7 +248,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         }
     }
 */
-
+    //enable and disable other tip edit text
+    // disable for tip percentage 15 and tip percentage = 25
     private void disableOtherTipEditText()
     {
        // etOtherTip = (EditText)findViewById(R.id.etOtherTip);
@@ -254,51 +270,23 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId)
     {
-        //double tipPercent = 0.0;
-
-        Toast.makeText(getBaseContext(),"inside on checked changed", Toast.LENGTH_SHORT).show();
-
         // checkedId is the RadioButton selected
         switch(checkedId)
         {
             case R.id.rbFifteen:
-                Toast.makeText(getBaseContext(),
-                        "fifteen is selected", Toast.LENGTH_SHORT).show();
-
                tipState = TipSelection.FIFTEEN;
-
-               // tipPercent = FIFTEEN;
-               /* tipAmountD = totalAmountD * FIFTEEN;
-                System.out.println("the tip amount double = " + tipAmountD);
-                System.out.println("the total amount double = " + totalAmountD);
-                Log.i("constants.LOG","inside fifteen");*/
-                //calculateTip(tipPercent);
-                disableOtherTipEditText();
-                //try this first time
-                calculateBill();
-                break;
+               disableOtherTipEditText();
+               calculateBill();
+               break;
 
             case R.id.rbTwentyfive:
-                Toast.makeText(getBaseContext(),
-                        "twenty five is selected", Toast.LENGTH_SHORT).show();
                 tipState = TipSelection.TWENTYFIVE;
-                //tipPercent = TWENTYFIVE;
-               //calculateTip(tipPercent);
-                //tipAmountD = totalAmountD * TWENTYFIVE;
                 disableOtherTipEditText();
                 calculateBill();
                 break;
             case R.id.rbOther:
-                Toast.makeText(getBaseContext(),
-                        "other is selected", Toast.LENGTH_SHORT).show();
                 tipState = TipSelection.OTHER;
                 enableOtherTipEditText();
-
-                //tipPercent = Double.parseDouble(etOtherTip.getText().toString());
-               // calculateTip(tipPercent);
-               /* String otherTip = etOther.getText().toString();
-
-                tipAmountD = totalAmountD + Double.parseDouble(etOther.getText().toString());*/
                 break;
 
         }
@@ -313,17 +301,10 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     {
         double tipPercent = 0.0;
 
-        //Log.i(Constants.LOG,"inside caldulate Bill");
-
-        Toast.makeText(getBaseContext(),"inside calculate bill",Toast.LENGTH_SHORT).show();
-
-
         //calculate tip
         if (tipState == TipSelection.FIFTEEN)
         {
-            //Toast.makeText(getBaseContext(),"state is fifteen", Toast.LENGTH_SHORT).show();
             tipPercent = FIFTEEN;
-
         }
         else if (tipState == TipSelection.TWENTYFIVE)
         {
@@ -336,27 +317,13 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         if (tipState != TipSelection.OTHER)
             tipAmountD = totalAmountD * tipPercent;
 
-
-
-        //Log.i(Constants.LOG,tipAmountD.toString());
-
         // calculate Bill Amount
         // tip amount+total amount = bill amount
         billAmountD = tipAmountD + totalAmountD;
-        Log.i(Constants.LOG,billAmountD.toString());
 
-       // etBillAmount.setText(billAmountD.toString());
-
-        // convert from double to string and assign it to editText tip amount
-       // etTipAmount.setText(tipAmountD.toString());
-
-
-
-
-            // calculate the amount per person - string to double and back to string.
-       // Toast.makeText(getBaseContext(),"num people to split" + numPeopleToSplit,Toast.LENGTH_SHORT).show();
+       // calculate the amount per person - string to double and back to string.
         numPeopleToSplitD = Double.parseDouble(etNumPeopleToSplit.getText().toString());
-        Toast.makeText(getBaseContext(),"numofpeople "+ numPeopleToSplitD, Toast.LENGTH_SHORT).show();
+
 
         // check division by zero
         if (numPeopleToSplitD > 0)
@@ -364,11 +331,6 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
             amountPerPersonD = billAmountD / numPeopleToSplitD;
 
         }
-        Toast.makeText(getBaseContext(),"perperson "+ amountPerPersonD, Toast.LENGTH_SHORT).show();
-
-        // Format and display
-        // NumberFormat formatter = NumberFormat.getCurrencyInstance();
-        //etTotalPerPerson.setText(amountPerPersonD.toString());
 
         display();
 
@@ -376,16 +338,14 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
 
     private void display()
     {
-
-
        // set tip amount,bill amount, total per person
        // convert double values to string
         etTipAmount.setText(tipAmountD.toString());
         etBillAmount.setText(billAmountD.toString());
-        // Format and display
+
+        // Format NOT DONE -------
         // NumberFormat formatter = NumberFormat.getCurrencyInstance();
         etTotalPerPerson.setText(amountPerPersonD.toString());
-
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -406,5 +366,4 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         }
         return super.onOptionsItemSelected(item);
     }
-
 }
