@@ -34,13 +34,17 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     public enum TipSelection{FIFTEEN,TWENTYFIVE,OTHER};
 
     private String totalAmount,billAmount,numPeopleToSplit,tipValue;
-    private Double totalAmountD,tipAmountD,billAmountD;
+    private Double totalAmountD = 0.0;
+    private Double tipAmountD,billAmountD;
     private Double numPeopleToSplitD,amountPerPersonD,tipValueD;
     private TipSelection tipState;
 
     public interface Constants {
         String LOG = "com.tipcalculator.app";
     }
+
+    // decimalformat.
+    //isnumber (string)
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -210,8 +214,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     }
 
 
-/*
-    private void writeItems()
+
+  /*  private void writeUserDataToFile()
     {
         File filesDir = getFilesDir();
         //create the file based on that path that gives access to handle
@@ -220,7 +224,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         // we don't the app to crash
         try {
             // load the items from the file
-           // FileUtils.writeLines(tipCalFile,todo);
+            FileUtils.writeLines(tipCalFile,todo);
         }
         // if the file does not exist, create a new arraylist
         catch(IOException e){
@@ -228,7 +232,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         }
 
     }
-
+()
     private void readItems()
     {
 
@@ -326,10 +330,21 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
 
 
         // check division by zero
-        if (numPeopleToSplitD > 0)
+        if ( (numPeopleToSplitD > 0) && (billAmountD > 0) )
         {
+            try{
             amountPerPersonD = billAmountD / numPeopleToSplitD;
+            }catch (NullPointerException e)
+            {
+                etNumPeopleToSplit.setText("1");
+            }
 
+        }
+        else
+        {
+            billAmountD = 0.0;
+            tipAmountD = 0.0;
+            amountPerPersonD = 0.0;
         }
 
         display();
