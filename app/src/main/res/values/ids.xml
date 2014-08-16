@@ -8,6 +8,6 @@
     <item name="tvBillAmount" type="id"/>
     <item name="tvTipAmount" type="id"/>
     <item name="etNumPeopleToSplit" type="id"/>
-    <item name="totalPerPerson" type="id"/><item name="etTotalPerPerson" type="id"/>
+    <item name="totalPerPerson" type="id"/><item name="tvTotalPerPerson" type="id"/><item name="rbTwenty" type="id"/>
 
 </resources>

@@ -12,6 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_num_of_people"
+
         android:id="@id/tvNumPeopleLabel"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
@@ -29,6 +30,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@id/etNumPeopleToSplit"
+        android:maxLines="1"
+        android:lines="1"
         android:gravity="center"
         android:layout_below="@id/tvNumPeopleLabel"
         android:layout_alignParentStart="true"
@@ -38,6 +41,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/etTotalAmount"
+        android:maxLines="1"
+        android:lines="1"
         android:layout_below="@id/tvtotalAmount"
         android:layout_alignStart="@id/tvtotalAmount"
         android:layout_alignBottom="@id/etNumPeopleToSplit"
@@ -52,36 +57,44 @@
         android:id="@+id/radioGroup">
 
         <RadioButton
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="85dp"
             android:text="@string/label_fifteen"
             android:id="@id/rbFifteen"
             android:singleLine="true"
-            android:layout_weight="0.33"
             android:checked="false" />
 
         <RadioButton
-            android:layout_width="0dp"
+            android:layout_width="59dp"
+            android:layout_height="match_parent"
+            android:text="@string/label_twenty"
+            android:id="@id/rbTwenty"
+            android:layout_weight="0.03" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
             android:layout_height="85dp"
             android:id="@id/rbTwentyfive"
             android:text="@string/label_twentyfive"
-            android:layout_weight="0.33"
             android:checked="false"
-             />
+            android:layout_weight="0.04" />
 
         <RadioButton
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="85dp"
             android:text="@string/label_other"
             android:id="@id/rbOther"
-            android:layout_weight="0.44" />
+            android:checked="false"
+            android:layout_weight="0.06" />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:maxLines="1"
+            android:lines="1"
             android:id="@+id/etOtherTip"
-            android:layout_weight="0.37"
+            android:layout_weight="0.16"
              />
 
     </RadioGroup>
@@ -90,16 +103,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tip Amount"
-        android:id="@id/tvTipAmount"
+        android:id="@+id/tvTipAmountLabel"
         android:gravity="center"
         android:layout_below="@+id/radioGroup"
         android:layout_alignParentStart="true" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/etTotalAmountToPay"
-        android:layout_alignBottom="@id/tvTipAmount"
+        android:id="@+id/tvTipAmount"
+        android:layout_alignBottom="@id/tvTipAmountLabel"
         android:gravity="center"
         android:layout_alignEnd="@+id/radioGroup"
         android:layout_alignStart="@+id/etTotalAmount" />
@@ -108,46 +121,39 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Bill Amount"
-        android:id="@id/tvBillAmount"
-        android:layout_below="@+id/etTipAmount"
+        android:id="@+id/tvBillAmountLabel"
+        android:layout_below="@id/tvTipAmountLabel"
         android:layout_alignParentStart="true"
         android:layout_marginTop="46dp"
-        android:layout_alignEnd="@id/tvTipAmount" />
+        android:layout_alignEnd="@id/tvTipAmountLabel" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/etTipAmount"
+        android:id="@+id/tvBillAmount"
+        android:layout_alignBottom="@id/tvBillAmountLabel"
         android:gravity="center"
-        android:layout_alignBottom="@id/tvTipAmount"
-        android:layout_alignStart="@+id/etTotalAmountToPay"
-        android:layout_alignEnd="@+id/etTotalAmountToPay" />
+        android:layout_alignStart="@id/etTotalAmount"
+        android:layout_alignEnd="@id/radioGroup" />
+
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Total Per Person"
-        android:id="@id/totalPerPerson"
+        android:id="@+id/totalPerPersonLabel"
         android:layout_marginTop="54dp"
-        android:layout_below="@id/tvBillAmount" />
+        android:layout_below="@id/tvBillAmountLabel" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/etBillAmount"
-        android:layout_alignBottom="@id/tvBillAmount"
+        android:id="@+id/tvTotalPerPerson"
+        android:layout_alignBottom="@id/totalPerPersonLabel"
         android:gravity="center"
-        android:layout_alignStart="@+id/etTipAmount"
-        android:layout_alignEnd="@+id/etTipAmount" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@id/etTotalPerPerson"
-        android:layout_alignBottom="@id/totalPerPerson"
-        android:gravity="center"
-        android:layout_alignStart="@+id/etBillAmount"
-        android:layout_alignEnd="@+id/etBillAmount" />
+        android:layout_alignStart="@id/etTotalAmount"
+        android:layout_alignEnd="@id/radioGroup" />
 
 
 </RelativeLayout>
