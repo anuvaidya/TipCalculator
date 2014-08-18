@@ -390,8 +390,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         //billAmountD = tipAmountD + totalAmountD;
         Log.d(Constants.LOG,"totalAmountD = " + totalAmountD);
         Log.d(Constants.LOG,"tipPercent = "+ tipPercent);
-        //billAmountD = tipAmountD.add(totalAmountD);
-        billAmountD = totalAmountD.add(tipValueD);
+        billAmountD = tipAmountD.add(totalAmountD);
+       // billAmountD = totalAmountD.add(tipValueD);
 
        // calculate the amount per person - string to double and back to string.
        // numPeopleToSplitD = Double.parseDouble(etNumPeopleToSplit.getText().toString());
