@@ -6,8 +6,10 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -15,6 +17,13 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -39,9 +48,6 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     private RadioGroup rgTip;
 
     private TextView tvTotalPerPerson;
-   /* public EditText etTipAmount;
-    public EditText etBillAmount;
-    public EditText etOtherTip; */
 
     private TextView tvTipAmount;
     private TextView tvBillAmount;
@@ -70,164 +76,32 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         String LOG = "com.tipcalculator.app";
     }
 
-    // decimalformat.
-    //isnumber (string)
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        Toast.makeText(getBaseContext(),"inside on create " ,Toast.LENGTH_SHORT).show();
         setContentView(R.layout.activity_main);
-        Toast.makeText(getBaseContext(),"after content menu ", Toast.LENGTH_SHORT).show();
+
         setup();
-
-        etTotalAmount.requestFocus();
-        //on edit text changed on numOfPeopleSplit
-        etNumPeopleToSplit.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-
-
-                String inputString = s.toString();
-                try {
-                numPeopleToSplit = etNumPeopleToSplit.getText().toString();
-                }catch (NullPointerException e){
-                    numPeopleToSplit = "1"; // set "1" as default
-                }
-
-
-              //  else
-             //   {
-
-                    Log.i(Constants.LOG,numPeopleToSplit);
-                    Log.i(Constants.LOG,inputString);
-                    try {
-                        // convert string to double - numPeopleTosplit
-                        //calling the string constructor on BigDecimal
-                        numPeopleToSplitD = new BigDecimal(numPeopleToSplit);
-
-
-                        //numPeopleToSplitD = Double.parseDouble(numPeopleToSplit);
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        numPeopleToSplitD = BigDecimal.ONE;
-
-                       // etNumPeopleToSplit.setText("1");
-                        return;
-                    }
-                    calculateBill();
-               // }
-
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-
-            }
-        });
-
-        //on edit text changed on total amount edit
-        etTotalAmount.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-
-               // String inputString = s.toString(); // this is just for validation check
-                try {
-                totalAmount = etTotalAmount.getText().toString();
-                }catch (NullPointerException e)
-                {
-                    totalAmount = "5"; // set $5 as the default
-                    return;
-                }
-
-               // if (totalAmount.length() != 0)
-                if ((totalAmount == null) && (totalAmount.equals("")))
-                {
-                    Toast.makeText(getBaseContext(),"enter the total amount greater than $5:00 ",
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                else
-                {
-                    //totalAmountD = Double.parseDouble(totalAmount);
-                    try
-                    {
-                        totalAmountD = new BigDecimal(totalAmount);
-                    } catch (NumberFormatException e)
-                    {
-
-                        //etTotalAmount.setText("5");
-
-                        return;
-                    }
-                    Log.d(Constants.LOG,"Before calling calculateBill");
-                    Log.d(Constants.LOG,"totalAmountD should be either 5 or some other amount " +
-                        totalAmountD);
-                   // Log.d(Constants.LOG,"the value of totalAmountd = "+ totalAmountD);
-
-                    calculateBill(); //uncomment aug 15th, friday
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-
-
-        //listener for other tip edit text
-        etOtherTip.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-
-                tipValue = etOtherTip.getText().toString();
-                if (tipValue.length() != 0) {
-                    try {
-                        //tipValueD = Double.parseDouble(tipValue);
-                        tipValueD = new BigDecimal(tipValue);
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        etOtherTip.setText("");
-                    }
-                    calculateBill();
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-        });
-
-
-        // listener for the radio buttons
-        rgTip.setOnCheckedChangeListener(this);
-
+        setUpListener();
     }
 
     private void setup() {
 
         etNumPeopleToSplit = (EditText)findViewById(R.id.etNumPeopleToSplit);
         etNumPeopleToSplit.setText("1");
+        etNumPeopleToSplit.setInputType(InputType.TYPE_CLASS_TEXT);
+
         etTotalAmount = (EditText)findViewById(R.id.etTotalAmount);
         etTotalAmount.setText("0.0");
+        etTotalAmount.setInputType(InputType.TYPE_CLASS_TEXT);
+        etTotalAmount.requestFocus();
+
+
         tvTipAmount = (TextView)findViewById(R.id.tvTipAmount);
-        //tvTipAmount.setEnabled(false);
         tvBillAmount = (TextView)findViewById(R.id.tvBillAmount);
-        //tvBillAmount.setEnabled(false);
         tvTotalPerPerson = (TextView)findViewById(R.id.tvTotalPerPerson);
-        tvTotalPerPerson.setEnabled(false);
         etOtherTip = (EditText)findViewById(R.id.etOtherTip);
         disableOtherTipEditText();
 
@@ -242,43 +116,263 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         // clear all the radio buttons
         rgTip.clearCheck();
 
-        //set the default radio button to radio button fifteen
-        // if I don't set this the listener is not firing
+        //default - 15%, num of people is 1
         rbFifteen.setChecked(true);
         tipState = TipSelection.FIFTEEN;
-        numPeopleToSplitD = BigDecimal.ONE; //default
+        numPeopleToSplitD = BigDecimal.ONE;
+
+
+    }
+
+    private void setUpListener()
+    {
+        etNumPeopleToSplit.addTextChangedListener(myetNumPeopleSplitTextWatcherListener);
+        etTotalAmount.addTextChangedListener(myetTotalAmountTextWatcherListener);
+        etTotalAmount.setOnKeyListener(myetTotalAmountOnKeyListener);
+        etOtherTip.addTextChangedListener(myetOtherTipTextWatcherListener);
+        // listener for the radio buttons
+        rgTip.setOnCheckedChangeListener(this);
+
     }
 
     //clear the edit boxes of tipamount,total amount
     //ADDED THIS RECENTLY
     private void clearEditText()
     {
-      // tipAmountD = 0.0;
-       tvTipAmount.setText("0.0");
-       etTotalAmount.setText("0.0");
-       tvBillAmount.setText("0.0");
+        // tipAmountD = 0.0;
+        tvTipAmount.setText("0.0");
+        etTotalAmount.setText("0.0");
+        tvBillAmount.setText("0.0");
 
     }
 
-  /*  private void writeUserDataToFile()
+    // Listener for enter button on TOtalAmount
+    private View.OnKeyListener myetTotalAmountOnKeyListener = new View.OnKeyListener() {
+
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event)
+        {
+            if (event.getAction() == KeyEvent.ACTION_DOWN
+                    && event.getKeyCode() ==       KeyEvent.KEYCODE_ENTER)
+            {
+                Log.d(Constants.LOG, "captured");
+                calculateBill();
+                return false;
+            }
+
+            return false;
+        }
+    };
+
+    private  TextWatcher myetNumPeopleSplitTextWatcherListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+            String inputString = s.toString();
+            try {
+                numPeopleToSplit = etNumPeopleToSplit.getText().toString();
+            }catch (NullPointerException e){
+                numPeopleToSplit = "1"; // set "1" as default
+            }
+            Log.i(Constants.LOG,numPeopleToSplit);
+            Log.i(Constants.LOG,inputString);
+            try {
+                // convert string to double - numPeopleTosplit
+                //calling the string constructor on BigDecimal
+                numPeopleToSplitD = new BigDecimal(numPeopleToSplit);
+
+
+                //numPeopleToSplitD = Double.parseDouble(numPeopleToSplit);
+            }
+            catch (NumberFormatException e)
+            {
+                numPeopleToSplitD = BigDecimal.ONE;
+
+                return;
+            }
+            calculateBill();
+
+
+
+        }
+    };
+
+    private TextWatcher myetTotalAmountTextWatcherListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            // String inputString = s.toString(); // this is just for validation check
+            try {
+                totalAmount = etTotalAmount.getText().toString();
+            }catch (NullPointerException e)
+            {
+                //totalAmount = "5"; // set $5 as the default
+                return;
+            }
+
+            // if (totalAmount.length() != 0)
+            if ((totalAmount == null) || (totalAmount.equals("") ))
+            {
+               /* Toast.makeText(getBaseContext(),"enter the total amount greater than $5:00 ",
+                        Toast.LENGTH_SHORT).show();
+                Log.d(Constants.LOG,"Before calling calculateBill");
+                Log.d(Constants.LOG,"totalAmountD should be either 5 or some other amount " +
+                        totalAmountD);*/
+
+                clearEditText();
+                return;
+            }
+
+            else
+            {
+                //totalAmountD = Double.parseDouble(totalAmount);
+                try
+                {
+                    totalAmountD = new BigDecimal(totalAmount);
+                } catch (NumberFormatException e)
+                {
+
+                    //etTotalAmount.setText("5");
+
+                    return;
+                }
+
+                calculateBill(); //uncomment aug 15th, friday
+            }
+
+        }
+    };
+
+    private TextWatcher myetOtherTipTextWatcherListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+            tipValue = etOtherTip.getText().toString();
+            if (tipValue.length() != 0) {
+                try {
+                    //tipValueD = Double.parseDouble(tipValue);
+                    tipValueD = new BigDecimal(tipValue);
+                }
+                catch (NumberFormatException e)
+                {
+                    etOtherTip.setText("");
+                }
+                calculateBill();
+            }
+        }
+    };
+    // 2 methods in FileUtil class readlines and write lines
+    // these 2 methods read and write from arraylist to files.
+    // get access to files first
+
+
+   private void readItems()
     {
+
+        //create an absolute path
         File filesDir = getFilesDir();
         //create the file based on that path that gives access to handle
         File tipCalFile = new File(filesDir,"tipCal.txt");
+        FileReader fileReader = null;
+        try {
+            fileReader = new FileReader(tipCalFile);
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        }
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+
         // try ... catch it's possible that file do not exist
         // we don't the app to crash
         try {
             // load the items from the file
-            FileUtils.writeLines(tipCalFile,todo);
-        }
-        // if the file does not exist, create a new arraylist
-        catch(IOException e){
+            //todoItems = new ArrayList<String>(FileUtils.readLines(todoFile));
+
+
+            StringBuffer stringBuffer = new StringBuffer();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuffer.append(line);
+                stringBuffer.append("\n");
+            }
+            fileReader.close();
+            System.out.println("Contents of file:");
+            System.out.println(stringBuffer.toString());
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
+
+
     }
-()
-    private void readItems()
+
+   private void writeItems()
+    {
+        File filesDir = getFilesDir();
+        Toast.makeText(getApplicationContext(),"the filesDir = " + filesDir,Toast.LENGTH_LONG).show();
+        //create the file based on that path that gives access to handle
+        File tipCalFile = new File(filesDir,"tipCal.txt");
+        // try ... catch it's possible that file do not exist
+        // we don't the app to crash
+
+            // load the items from the file
+            //FileUtils.writeLines(todoFile, todoItems);
+
+            String totalAmountString = totalAmountD.toPlainString();
+            String tipValueString = tipValueD.toPlainString();
+
+            /*
+            String
+
+            tipAmountD,billAmountD;
+    private BigDecimal numPeopleToSplitD;;
+    private BigDecimal amountPerPersonD,tipValueD; */
+
+            try {
+                FileUtils.writeStringToFile(tipCalFile, tipValueString);
+            } catch (IOException e) {
+                Log.e(Constants.LOG, "Unable to write to the todo.txt file.");
+            }
+
+    }
+
+
+   /* create the absolute path using getFilesDir()
+      create the new file to write to and
+      write the items.
+   */
+
+
+  /*  private void readItems()
     {
 
         //create an absolute path
@@ -296,6 +390,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
             todoItems = new ArrayList<String>();
         }
     }
+
 */
     //enable and disable other tip edit text
     // disable for tip percentage 15 and tip percentage = 25
@@ -340,14 +435,11 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
                 break;
             case R.id.rbOther:
                 tipState = TipSelection.OTHER;
-                enableOtherTipEditText();
+                enableOtherTipEditText(); // editTextListener calls calculateBill()
                 break;
 
         }
-        // the reason you don't want to call outside because when the other
-        // radio button is selected, I would like to show the existing values
-        // only when the user enters the new value, the new bill is calculated.
-        //calculateBill();
+
     }
 
 
@@ -372,9 +464,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
             tipPercent = BigDecimal.valueOf(TWENTYFIVE);
         }
         else
-           // tipAmountD = tipValueD;
            tipAmountD = tipValueD;
-          // tipAmountD = BigDecimal.valueOf(tipValueD);
+          // tipAmountD = tipValueD.setScale(2,RoundingMode.HALF_UP);
+
 
         Log.d(Constants.LOG," inside calculate bill");
         Log.d(Constants.LOG,"tipPercent = "+ tipPercent);
@@ -383,6 +475,9 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         // calculate tip if the user selects percentages.
         if (tipState != TipSelection.OTHER)
             tipAmountD = totalAmountD.multiply(tipPercent);
+
+        // rounding up to 2 digits
+        tipAmountD.setScale(2, RoundingMode.HALF_UP);
             //tipAmountD = totalAmountD * tipPercent;
 
         // calculate Bill Amount
@@ -391,6 +486,8 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
         Log.d(Constants.LOG,"totalAmountD = " + totalAmountD);
         Log.d(Constants.LOG,"tipPercent = "+ tipPercent);
         billAmountD = tipAmountD.add(totalAmountD);
+
+        billAmountD.setScale(2,RoundingMode.HALF_UP);
        // billAmountD = totalAmountD.add(tipValueD);
 
        // calculate the amount per person - string to double and back to string.
@@ -433,6 +530,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
     {
        // set tip amount,bill amount, total per person
        // convert double values to string
+
         tvTipAmount.setText(tipAmountD.toString());
         tvBillAmount.setText(billAmountD.toString());
 

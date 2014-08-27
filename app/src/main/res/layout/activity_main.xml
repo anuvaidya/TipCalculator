@@ -95,7 +95,7 @@
             android:lines="1"
             android:id="@+id/etOtherTip"
             android:layout_weight="0.16"
-             />
+            android:hint="00.00" />
 
     </RadioGroup>
 
