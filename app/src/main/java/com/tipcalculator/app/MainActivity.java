@@ -337,6 +337,7 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
 
     }
 
+    // This is called when the user presses the home button
     @Override
     protected void onResume() {
        super.onResume();
@@ -355,109 +356,6 @@ public class MainActivity extends Activity implements OnCheckedChangeListener{
 
     }
 
-
-    // 2 methods in FileUtil class readlines and write lines
-    // these 2 methods read and write from arraylist to files.
-    // get access to files first
-
-
- /*  private void readItems()
-    {
-
-        //create an absolute path
-        File filesDir = getFilesDir();
-        //create the file based on that path that gives access to handle
-        File tipCalFile = new File(filesDir,"tipCal.txt");
-        FileReader fileReader = null;
-        try {
-            fileReader = new FileReader(tipCalFile);
-        } catch (FileNotFoundException e1) {
-            e1.printStackTrace();
-        }
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-
-        // try ... catch it's possible that file do not exist
-        // we don't the app to crash
-        try {
-            // load the items from the file
-            //todoItems = new ArrayList<String>(FileUtils.readLines(todoFile));
-
-
-            StringBuffer stringBuffer = new StringBuffer();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuffer.append(line);
-                stringBuffer.append("\n");
-            }
-            fileReader.close();
-            System.out.println("Contents of file:");
-            System.out.println(stringBuffer.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-
-    }
-
-   private void writeItems()
-    {
-        File filesDir = getFilesDir();
-        Toast.makeText(getApplicationContext(),"the filesDir = " + filesDir,Toast.LENGTH_LONG).show();
-        //create the file based on that path that gives access to handle
-        File tipCalFile = new File(filesDir,"tipCal.txt");
-        // try ... catch it's possible that file do not exist
-        // we don't the app to crash
-
-            // load the items from the file
-            //FileUtils.writeLines(todoFile, todoItems);
-
-            String totalAmountString = totalAmountD.toPlainString();
-            String tipValueString = tipValueD.toPlainString();
-
-            /*
-            String
-
-            tipAmountD,billAmountD;
-    private BigDecimal numPeopleToSplitD;;
-    private BigDecimal amountPerPersonD,tipValueD; */
-
-      /*      try {
-                FileUtils.writeStringToFile(tipCalFile, tipValueString);
-            } catch (IOException e) {
-                Log.e(Constants.LOG, "Unable to write to the todo.txt file.");
-            }
-
-    } */
-
-
-   /* create the absolute path using getFilesDir()
-      create the new file to write to and
-      write the items.
-   */
-
-
-  /*  private void readItems()
-    {
-
-        //create an absolute path
-        File filesDir = getFilesDir();
-        //create the file based on that path that gives access to handle
-        File todoFile = new File(filesDir,"todo.txt");
-        // try ... catch it's possible that file do not exist
-        // we don't the app to crash
-        try {
-            // load the items from the file
-            todoItems = new ArrayList<String>(FileUtils.readLines(todoFile));
-        }
-        // if the file does not exist, create a new arraylist
-        catch(IOException e){
-            todoItems = new ArrayList<String>();
-        }
-    }
-
-*/
     //enable and disable other tip edit text
     // disable for tip percentage 15 and tip percentage = 25
     private void disableOtherTipEditText()
