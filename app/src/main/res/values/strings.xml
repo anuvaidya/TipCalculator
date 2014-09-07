@@ -11,6 +11,6 @@
     <string name="label_other">Other</string>
     <string name="label_amount_to_pay"/>
     <string name="label_total_amount_to_pay">Total Amount To Pay</string>
-    <string name="label_tip_amount">Tip Amount</string><string name="label_twenty">20%</string>
+    <string name="label_tip_amount">Tip Amount</string><string name="label_twenty">20%</string><string name="label_save">SAVE</string>
 
 </resources>

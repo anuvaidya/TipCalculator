@@ -155,5 +155,33 @@
         android:layout_alignStart="@id/etTotalAmount"
         android:layout_alignEnd="@id/radioGroup" />
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SAVE"
+        android:id="@+id/btnSave"
+        android:layout_marginTop="39dp"
+        android:layout_below="@+id/totalPerPersonLabel"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CLEAR"
+        android:id="@id/btnClear"
+        android:layout_alignTop="@+id/btnSave"
+        android:layout_toRightOf="@id/etNumPeopleToSplit" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EXIT"
+        android:id="@id/btnExit"
+        android:layout_alignTop="@id/btnClear"
+        android:layout_alignStart="@+id/tvTotalPerPerson" />
+
 
 </RelativeLayout>
